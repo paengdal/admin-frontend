@@ -6,6 +6,7 @@ import Layout from '../../components/atoms/Layout';
 import OutlinedButton from '../../components/atoms/OutlinedButton';
 import { useAuth } from '../../contexts/authContext';
 import postApi from '../../services/postApi';
+import { PostListResponse } from '../../types/dtos/profile.dto'; //
 
 const POSTS_PER_PAGE = 5;
 
@@ -15,11 +16,11 @@ function PostListPage() {
 
   const [searchKeyword, setSearchKeyword] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [inputValue, setInputValue] = useState(''); // 입력창 상태 따로
+  const [inputValue, setInputValue] = useState('');
 
   const skip = (currentPage - 1) * POSTS_PER_PAGE;
 
-  const { data, isLoading } = useQuery({
+  const { data: posts, isLoading } = useQuery<PostListResponse>({
     queryKey: ['posts', { keyword: searchKeyword, skip }],
     queryFn: () => {
       if (searchKeyword) {
@@ -37,7 +38,7 @@ function PostListPage() {
         });
       }
     },
-    keepPreviousData: true,
+    placeholderData: (previousData) => previousData,
   });
 
   const handleSearch = () => {
@@ -68,6 +69,10 @@ function PostListPage() {
     logOut();
   };
 
+  if (posts) {
+    console.log(posts);
+  }
+
   return (
     <Layout>
       <h1 className="text-2xl font-bold mb-6 text-center">자유 게시판</h1>
@@ -82,7 +87,11 @@ function PostListPage() {
           className="flex-1 border p-2 rounded"
           placeholder="검색어를 입력하세요"
         />
-        <OutlinedButton onClick={handleSearch} className="w-[100px] text-sm">
+        <OutlinedButton
+          type="button"
+          onClick={handleSearch}
+          className="w-[100px] text-sm"
+        >
           검색
         </OutlinedButton>
       </div>
@@ -98,8 +107,8 @@ function PostListPage() {
           </tr>
         </thead>
         <tbody>
-          {!isLoading && data?.result?.length > 0 ? (
-            data.result.map((post: any) => (
+          {!isLoading && posts?.result && posts?.result?.length > 0 ? (
+            posts?.result.map((post) => (
               <tr
                 key={post.id}
                 className="hover:bg-gray-50 cursor-pointer"
@@ -107,7 +116,7 @@ function PostListPage() {
               >
                 <td className="p-2 border">{post.title}</td>
                 <td className="p-2 border">
-                  {user?.id === post.userId && (
+                  {user?.id === post.id && (
                     <button
                       className="text-xs text-blue-500 mr-2 underline"
                       onClick={(e) => {
@@ -120,7 +129,7 @@ function PostListPage() {
                   )}
                   {post.nickname}
                 </td>
-                <td className="p-2 border">{post.viewCount}</td>
+                <td className="p-2 border">{post.watch}</td>
                 <td className="p-2 border">
                   {new Date(post.createdAt).toLocaleDateString()}
                 </td>
@@ -150,7 +159,7 @@ function PostListPage() {
         <div className="flex items-center justify-center w-10 h-10 rounded-full border text-sm font-bold bg-blue-100">
           {currentPage}
         </div>
-        {data?.result?.length === POSTS_PER_PAGE && (
+        {posts?.result?.length === POSTS_PER_PAGE && (
           <OutlinedButton onClick={() => setCurrentPage((p) => p + 1)}>
             다음
           </OutlinedButton>

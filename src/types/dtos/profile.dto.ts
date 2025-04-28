@@ -10,3 +10,14 @@ export type searchPostsParams = {
   take: number;
   order: 'ASC' | 'DESC';
 };
+
+export type PostListResponse = {
+  result: {
+    id: number;
+    title: string;
+    nickname: string;
+    watch: number;
+    createdAt: string;
+  }[];
+  message: string;
+};
