@@ -5,7 +5,7 @@ import client from './client';
 const getMyInfo = async () => {
   const url = '/users/myInfo';
   const response = await client.get(url);
-  return response.data;
+  return response.data.result;
 };
 
 // 회원가입

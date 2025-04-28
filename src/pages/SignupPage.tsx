@@ -146,7 +146,7 @@ function SignupPage() {
 
               <OutlinedButton
                 type="button"
-                className="w-[200px] px-4 text-base"
+                className="w-[150px] px-4 !text-base"
                 onClick={handleCheckEmail}
               >
                 이메일 확인
@@ -177,7 +177,7 @@ function SignupPage() {
 
               <OutlinedButton
                 type="button"
-                className="w-[200px] px-4 text-base"
+                className="w-[150px] px-4 !text-base"
                 onClick={handleCheckNickname}
               >
                 닉네임 확인

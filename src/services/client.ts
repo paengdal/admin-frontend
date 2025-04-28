@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-// localStorage에서 accessToken 가져오기
 function getAccessToken() {
   return localStorage.getItem('accessToken');
 }
@@ -10,13 +9,20 @@ const client = axios.create({
   // withCredentials: true,
 });
 
+// Authorization 제외할 경로 리스트
+const AUTH_WHITELIST = [
+  '/login',
+  '/signup',
+  '/users/check/nickname/exist',
+  '/users/check/email/exist',
+];
+
 client.interceptors.request.use(
   (config) => {
     const accessToken = getAccessToken();
 
-    const AUTH_WHITELIST = ['/login', '/signup'];
     const isAuthPath = AUTH_WHITELIST.some((path) =>
-      config.url?.includes(path)
+      config.url?.startsWith(path)
     );
 
     if (accessToken && !isAuthPath) {

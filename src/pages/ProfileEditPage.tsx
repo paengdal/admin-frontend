@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -52,6 +52,12 @@ function ProfileEditPage() {
     resolver: zodResolver(editProfileSchema),
     mode: 'onChange',
   });
+
+  const { data: user } = useQuery({
+    queryKey: ['me'],
+    queryFn: userApi.getMyInfo,
+  });
+  console.log(user);
 
   const nickname = watch('nickname');
   const password = watch('password');
@@ -156,7 +162,7 @@ function ProfileEditPage() {
               </div>
               <OutlinedButton
                 type="button"
-                className="w-[200px] px-4 text-base"
+                className="w-[150px] px-4 !text-base"
                 onClick={handleCheckNickname}
               >
                 닉네임 확인
