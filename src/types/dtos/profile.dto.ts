@@ -17,7 +17,7 @@ export type PostListResponse = {
     title: string;
     nickname: string;
     watch: number;
-    createdAt: string;
+    created_at: string;
   }[];
   message: string;
 };

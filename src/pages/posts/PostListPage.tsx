@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import dayjs from 'dayjs';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../../components/atoms/Button';
@@ -131,7 +132,7 @@ function PostListPage() {
                 </td>
                 <td className="p-2 border">{post.watch}</td>
                 <td className="p-2 border">
-                  {new Date(post.createdAt).toLocaleDateString()}
+                  {dayjs(post.created_at).format('YYYY.MM.DD HH:mm:ss')}
                 </td>
               </tr>
             ))
