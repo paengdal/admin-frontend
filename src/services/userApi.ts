@@ -1,4 +1,4 @@
-import { LoginDto, SignupDto } from '../types/dtos/user.dto';
+import { LoginDto, SignupDto, UpdateProfileDto } from '../types/dtos/user.dto';
 import client from './client';
 
 // user정보 가져오기
@@ -19,6 +19,8 @@ const signup = async (data: SignupDto) => {
 const login = async (data: LoginDto) => {
   const url = '/users/nickname/login';
   const response = await client.post(url, data);
+
+  localStorage.setItem('accessToken', response.data.result);
   console.log(response);
   return response;
 };
@@ -37,12 +39,20 @@ const checkEmail = async (email: string) => {
   return response.data;
 };
 
+// 내 정보 수정
+const updateProfile = async (data: UpdateProfileDto) => {
+  const url = '/users';
+  const response = await client.patch(url, data);
+  return response.data;
+};
+
 const userApi = {
   getMyInfo,
   signup,
   login,
   checkNickname,
   checkEmail,
+  updateProfile,
 };
 
 export default userApi;
