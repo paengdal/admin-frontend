@@ -2,11 +2,18 @@ import { ButtonHTMLAttributes } from 'react';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {}
 
-function Button({ className = '', ...props }: ButtonProps) {
+function Button({ className = '', disabled, ...props }: ButtonProps) {
   return (
     <button
       {...props}
-      className={`w-full h-[64px] bg-blue-500 text-xl text-white rounded box-border p-4 hover:bg-blue-600 transition ${className}`}
+      disabled={disabled}
+      className={`w-full h-[64px] rounded p-4 text-xl text-white transition
+        ${
+          disabled
+            ? 'bg-gray-300 cursor-not-allowed'
+            : 'bg-blue-500 hover:bg-blue-600'
+        }
+        ${className}`}
     />
   );
 }

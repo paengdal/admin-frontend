@@ -1,31 +1,48 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import { z } from 'zod';
+
+import { useState } from 'react';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import Layout from '../components/Layout';
 import OutlinedButton from '../components/OutlinedButton';
 import { ROUTES } from '../constants/routes';
+import { signupSchema } from '../schemas/schemas';
 import userApi from '../services/userApi';
+
+type SignupForm = z.infer<typeof signupSchema>;
 
 function SignupPage() {
   const navigate = useNavigate();
+  const [isEmailChecked, setIsEmailChecked] = useState(false);
+  const [isNicknameChecked, setIsNicknameChecked] = useState(false);
 
-  const [email, setEmail] = useState('');
-  const [nickname, setNickname] = useState('');
-  const [password, setPassword] = useState('');
-  const [checkPassword, setCheckPassword] = useState('');
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+    getValues,
+  } = useForm<SignupForm>({
+    resolver: zodResolver(signupSchema),
+    mode: 'onChange',
+  });
 
   const signupMutation = useMutation({
-    mutationFn: async () => {
-      // 1. 회원가입 요청
-      await userApi.signup({ email, nickname, password });
-
-      // 2. 회원가입 성공하면 바로 로그인 요청
-      await userApi.login({ nickname, password });
+    mutationFn: async (data: SignupForm) => {
+      await userApi.signup({
+        email: data.email,
+        nickname: data.nickname,
+        password: data.password,
+      });
+      await userApi.login({
+        nickname: data.nickname,
+        password: data.password,
+      });
     },
     onSuccess: () => {
-      // 3. 로그인까지 성공하면 게시글 목록 페이지로 이동
       navigate(ROUTES.POSTS.LIST);
     },
     onError: (error) => {
@@ -33,23 +50,42 @@ function SignupPage() {
     },
   });
 
-  const { mutate: checkNickname } = useMutation({
-    mutationFn: (data: string) => userApi.checkNickname(data),
-    onSuccess: (data) => {
-      alert(`${data.message}:${data.result}`);
-    },
-  });
-
   const { mutate: checkEmail } = useMutation({
-    mutationFn: (data: string) => userApi.checkEmail(data),
+    mutationFn: (email: string) => userApi.checkEmail(email),
     onSuccess: (data) => {
-      alert(`${data.message}:${data.result}`);
+      if (data.result) {
+        alert('이미 사용 중인 이메일입니다.');
+        setIsEmailChecked(false);
+      } else {
+        alert('사용 가능한 이메일입니다.');
+        setIsEmailChecked(true);
+      }
+    },
+    onError: () => {
+      alert('이메일 확인 중 오류가 발생했습니다.');
+      setIsEmailChecked(false);
     },
   });
 
-  const handleSignup = (e: React.FormEvent) => {
-    e.preventDefault();
-    signupMutation.mutate();
+  const { mutate: checkNickname } = useMutation({
+    mutationFn: (nickname: string) => userApi.checkNickname(nickname),
+    onSuccess: (data) => {
+      if (data.result) {
+        alert('이미 사용 중인 닉네임입니다.');
+        setIsNicknameChecked(false);
+      } else {
+        alert('사용 가능한 닉네임입니다.');
+        setIsNicknameChecked(true);
+      }
+    },
+    onError: () => {
+      alert('닉네임 확인 중 오류가 발생했습니다.');
+      setIsNicknameChecked(false);
+    },
+  });
+
+  const handleSignup = (data: SignupForm) => {
+    signupMutation.mutate(data);
   };
 
   const handleCancel = () => {
@@ -61,20 +97,28 @@ function SignupPage() {
   };
 
   const handleCheckEmail = () => {
-    console.log('이메일 중복 확인:', email);
-    checkEmail(email);
+    const email = getValues('email');
+    if (email) {
+      checkEmail(email);
+    } else {
+      alert('이메일을 먼저 입력하세요.');
+    }
   };
 
   const handleCheckNickname = () => {
-    console.log('닉네임 중복 확인:', nickname);
-    checkNickname(nickname);
+    const nickname = getValues('nickname');
+    if (nickname) {
+      checkNickname(nickname);
+    } else {
+      alert('닉네임을 먼저 입력하세요.');
+    }
   };
 
   return (
     <Layout>
       <div className="bg-white p-8 rounded shadow">
         <h1 className="text-2xl font-bold mb-6 text-center">회원가입</h1>
-        <form onSubmit={handleSignup} className="space-y-6">
+        <form onSubmit={handleSubmit(handleSignup)} className="space-y-6">
           {/* Email 입력 */}
           <div>
             <label htmlFor="email" className="block text-xl font-medium mb-2">
@@ -84,14 +128,17 @@ function SignupPage() {
               <Input
                 id="email"
                 type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                {...register('email', {
+                  onChange: () => setIsEmailChecked(false),
+                })}
+                error={errors.email?.message}
                 required
               />
+
               <OutlinedButton
                 type="button"
-                onClick={handleCheckEmail}
                 className="w-[200px] px-4 text-base"
+                onClick={handleCheckEmail}
               >
                 이메일 확인
               </OutlinedButton>
@@ -110,14 +157,17 @@ function SignupPage() {
               <Input
                 id="nickname"
                 type="text"
-                value={nickname}
-                onChange={(e) => setNickname(e.target.value)}
+                {...register('nickname', {
+                  onChange: () => setIsNicknameChecked(false),
+                })}
+                error={errors.nickname?.message}
                 required
               />
+
               <OutlinedButton
                 type="button"
-                onClick={handleCheckNickname}
                 className="w-[200px] px-4 text-base"
+                onClick={handleCheckNickname}
               >
                 닉네임 확인
               </OutlinedButton>
@@ -135,8 +185,8 @@ function SignupPage() {
             <Input
               id="password"
               type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              {...register('password')}
+              error={errors.password?.message}
               required
             />
           </div>
@@ -152,8 +202,8 @@ function SignupPage() {
             <Input
               id="checkPassword"
               type="password"
-              value={checkPassword}
-              onChange={(e) => setCheckPassword(e.target.value)}
+              {...register('checkPassword')}
+              error={errors.checkPassword?.message}
               required
             />
           </div>
@@ -163,7 +213,12 @@ function SignupPage() {
             <OutlinedButton type="button" onClick={handleCancel}>
               가입 취소
             </OutlinedButton>
-            <Button type="submit">회원가입</Button>
+            <Button
+              type="submit"
+              disabled={!(isValid && isEmailChecked && isNicknameChecked)}
+            >
+              {signupMutation.isPending ? '회원가입 중...' : '회원가입'}
+            </Button>
             <OutlinedButton type="button" onClick={handleLogin}>
               로그인하러 가기
             </OutlinedButton>
