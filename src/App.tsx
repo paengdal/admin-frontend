@@ -1,35 +1,31 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Navigate, Route, Routes } from 'react-router-dom';
+
+// 페이지 임포트
+import ProfileEditPage from './pages/ProfileEditPage';
+import SignupPage from './pages/SignupPage';
+
+import LoginPage from './pages/LoginPage';
+import PostCreatePage from './pages/posts/PostCreatePage';
+import PostDetailPage from './pages/posts/PostDetailPage';
+import PostEditPage from './pages/posts/PostEditPage';
+import PostListPage from './pages/posts/PostListPage';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <Routes>
+      <Route path="/" element={<Navigate to="/login" replace />} />
+      {/* 회원 관련 */}
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/signup" element={<SignupPage />} />
+      <Route path="/profile/edit" element={<ProfileEditPage />} />
+
+      {/* 게시글 관련 */}
+      <Route path="/posts" element={<PostListPage />} />
+      <Route path="/posts/new" element={<PostCreatePage />} />
+      <Route path="/posts/:postId/edit" element={<PostEditPage />} />
+      <Route path="/posts/:postId" element={<PostDetailPage />} />
+    </Routes>
+  );
 }
 
-export default App
+export default App;
