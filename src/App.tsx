@@ -1,10 +1,8 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
-
-// 페이지 임포트
+import { ROUTES } from './constants/routes';
+import LoginPage from './pages/LoginPage';
 import ProfileEditPage from './pages/ProfileEditPage';
 import SignupPage from './pages/SignupPage';
-
-import LoginPage from './pages/LoginPage';
 import PostCreatePage from './pages/posts/PostCreatePage';
 import PostDetailPage from './pages/posts/PostDetailPage';
 import PostEditPage from './pages/posts/PostEditPage';
@@ -13,17 +11,18 @@ import PostListPage from './pages/posts/PostListPage';
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/login" replace />} />
+      <Route path="/" element={<Navigate to={ROUTES.LOGIN} replace />} />
+
       {/* 회원 관련 */}
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/signup" element={<SignupPage />} />
-      <Route path="/profile/edit" element={<ProfileEditPage />} />
+      <Route path={ROUTES.LOGIN} element={<LoginPage />} />
+      <Route path={ROUTES.SIGNUP} element={<SignupPage />} />
+      <Route path={ROUTES.PROFILE_EDIT} element={<ProfileEditPage />} />
 
       {/* 게시글 관련 */}
-      <Route path="/posts" element={<PostListPage />} />
-      <Route path="/posts/new" element={<PostCreatePage />} />
-      <Route path="/posts/:postId/edit" element={<PostEditPage />} />
-      <Route path="/posts/:postId" element={<PostDetailPage />} />
+      <Route path={ROUTES.POSTS.LIST} element={<PostListPage />} />
+      <Route path={ROUTES.POSTS.CREATE} element={<PostCreatePage />} />
+      <Route path={ROUTES.POSTS.EDIT()} element={<PostEditPage />} />
+      <Route path={ROUTES.POSTS.DETAIL()} element={<PostDetailPage />} />
     </Routes>
   );
 }

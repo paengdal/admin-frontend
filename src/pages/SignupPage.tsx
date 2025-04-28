@@ -5,6 +5,7 @@ import Button from '../components/Button';
 import Input from '../components/Input';
 import Layout from '../components/Layout';
 import OutlinedButton from '../components/OutlinedButton';
+import { ROUTES } from '../constants/routes';
 import userApi from '../services/userApi';
 import { SignupDto } from '../types/dtos/user.dto';
 
@@ -27,11 +28,11 @@ function SignupPage() {
   };
 
   const handleCancel = () => {
-    navigate('/login');
+    navigate(ROUTES.LOGIN);
   };
 
   const handleLogin = () => {
-    navigate('/login');
+    navigate(ROUTES.LOGIN);
   };
 
   const handleCheckEmail = () => {

@@ -5,6 +5,7 @@ import Button from '../components/Button';
 import Input from '../components/Input';
 import Layout from '../components/Layout';
 import OutlinedButton from '../components/OutlinedButton';
+import { ROUTES } from '../constants/routes';
 import userApi from '../services/userApi';
 import { LoginDto } from '../types/dtos/user.dto';
 
@@ -23,11 +24,12 @@ function LoginPage() {
     mutationFn: (data: LoginDto) => userApi.login(data),
     onSuccess: (data) => {
       console.log('data', data);
+      navigate(ROUTES.POSTS.LIST);
     },
   });
 
   const handleSignup = () => {
-    navigate('/signup');
+    navigate(ROUTES.SIGNUP);
   };
 
   return (
