@@ -1,18 +1,30 @@
+import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import Layout from '../components/Layout';
+import OutlinedButton from '../components/OutlinedButton';
+import userApi from '../services/userApi';
+import { LoginDto } from '../types/dtos/user.dto';
 
 function LoginPage() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
+  const [nickname, setNickname] = useState('');
   const [password, setPassword] = useState('');
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('로그인 시도:', { email, password });
+    login({ nickname, password });
+    console.log('로그인 시도:', { nickname, password });
   };
+
+  const { mutate: login } = useMutation({
+    mutationFn: (data: LoginDto) => userApi.login(data),
+    onSuccess: (data) => {
+      console.log('data', data);
+    },
+  });
 
   const handleSignup = () => {
     navigate('/signup');
@@ -25,13 +37,13 @@ function LoginPage() {
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
             <label htmlFor="email" className="block mb-2 font-medium">
-              Email
+              Nickname
             </label>
             <Input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              id="nickname"
+              type="text"
+              value={nickname}
+              onChange={(e) => setNickname(e.target.value)}
               required
             />
           </div>
@@ -51,9 +63,9 @@ function LoginPage() {
 
           <Button type="submit">로그인</Button>
 
-          <Button type="button" onClick={handleSignup}>
+          <OutlinedButton type="button" onClick={handleSignup}>
             회원가입
-          </Button>
+          </OutlinedButton>
         </form>
       </div>
     </Layout>
