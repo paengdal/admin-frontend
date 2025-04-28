@@ -227,7 +227,7 @@ function SignupPage() {
               {signupMutation.isPending ? '회원가입 중...' : '회원가입'}
             </Button>
             <OutlinedButton type="button" onClick={handleLogin}>
-              로그인하러 가기
+              로그인
             </OutlinedButton>
           </div>
         </form>

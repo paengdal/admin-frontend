@@ -8,6 +8,7 @@ import { AxiosError } from 'axios';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import Layout from '../components/Layout';
+import OutlinedButton from '../components/OutlinedButton';
 import { ROUTES } from '../constants/routes';
 import { loginSchema } from '../schemas/schemas';
 import userApi from '../services/userApi';
@@ -49,6 +50,10 @@ function LoginPage() {
 
   const handleLogin = (data: LoginForm) => {
     loginMutation.mutate(data);
+  };
+
+  const handleSignupNavigate = () => {
+    navigate(ROUTES.SIGNUP);
   };
 
   return (
@@ -94,6 +99,10 @@ function LoginPage() {
           <Button type="submit" disabled={!isValid}>
             {loginMutation.isPending ? '로그인 중...' : '로그인'}
           </Button>
+          {/* 회원가입 하러 가기 버튼 */}
+          <OutlinedButton type="button" onClick={handleSignupNavigate}>
+            회원가입
+          </OutlinedButton>
         </form>
       </div>
     </Layout>
