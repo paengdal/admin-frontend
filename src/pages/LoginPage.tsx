@@ -1,73 +1,99 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import { z } from 'zod';
+
+import { AxiosError } from 'axios';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import Layout from '../components/Layout';
-import OutlinedButton from '../components/OutlinedButton';
 import { ROUTES } from '../constants/routes';
+import { loginSchema } from '../schemas/schemas';
 import userApi from '../services/userApi';
-import { LoginDto } from '../types/dtos/user.dto';
+
+type LoginForm = z.infer<typeof loginSchema>;
 
 function LoginPage() {
   const navigate = useNavigate();
-  const [nickname, setNickname] = useState('');
-  const [password, setPassword] = useState('');
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    login({ nickname, password });
-    console.log('로그인 시도:', { nickname, password });
-  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+  } = useForm<LoginForm>({
+    resolver: zodResolver(loginSchema),
+    mode: 'onChange', // 중요: 입력 즉시 검증
+  });
 
-  const { mutate: login } = useMutation({
-    mutationFn: (data: LoginDto) => userApi.login(data),
-    onSuccess: (data) => {
-      console.log('data', data);
+  const loginMutation = useMutation({
+    mutationFn: async (data: LoginForm) => {
+      await userApi.login({
+        nickname: data.nickname,
+        password: data.password,
+      });
+    },
+    onSuccess: () => {
       navigate(ROUTES.POSTS.LIST);
+    },
+    onError: (error) => {
+      if (error instanceof AxiosError) {
+        console.error('서버 응답:', error.response?.data);
+        alert(error.response?.data.message || '로그인 실패');
+      } else {
+        console.error('예상치 못한 에러:', error);
+        alert('로그인 중 오류가 발생했습니다.');
+      }
     },
   });
 
-  const handleSignup = () => {
-    navigate(ROUTES.SIGNUP);
+  const handleLogin = (data: LoginForm) => {
+    loginMutation.mutate(data);
   };
 
   return (
     <Layout>
       <div className="bg-white p-8 rounded shadow">
         <h1 className="text-2xl font-bold mb-6 text-center">로그인</h1>
-        <form onSubmit={handleLogin} className="space-y-4">
+        <form onSubmit={handleSubmit(handleLogin)} className="space-y-6">
+          {/* Nickname 입력 */}
           <div>
-            <label htmlFor="email" className="block mb-2 font-medium">
+            <label
+              htmlFor="nickname"
+              className="block text-xl font-medium mb-2"
+            >
               Nickname
             </label>
             <Input
               id="nickname"
               type="text"
-              value={nickname}
-              onChange={(e) => setNickname(e.target.value)}
+              {...register('nickname')}
+              error={errors.nickname?.message}
               required
             />
           </div>
 
+          {/* Password 입력 */}
           <div>
-            <label htmlFor="password" className="block mb-1 font-medium">
+            <label
+              htmlFor="password"
+              className="block text-xl font-medium mb-2"
+            >
               Password
             </label>
             <Input
               id="password"
               type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              {...register('password')}
+              error={errors.password?.message}
               required
             />
           </div>
 
-          <Button type="submit">로그인</Button>
-
-          <OutlinedButton type="button" onClick={handleSignup}>
-            회원가입
-          </OutlinedButton>
+          {/* 로그인 버튼 */}
+          <Button type="submit" disabled={!isValid}>
+            {loginMutation.isPending ? '로그인 중...' : '로그인'}
+          </Button>
         </form>
       </div>
     </Layout>

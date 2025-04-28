@@ -18,3 +18,14 @@ export const signupSchema = z
     message: '비밀번호가 일치하지 않습니다.',
     path: ['checkPassword'],
   });
+
+export const loginSchema = z.object({
+  nickname: z
+    .string()
+    .min(1, { message: requiredStr })
+    .min(2, '닉네임을 최소 2자 이상 입력하세요.'),
+  password: z
+    .string()
+    .min(1, { message: requiredStr })
+    .min(6, '비밀번호는 최소 6자 이상이어야 합니다.'),
+});
