@@ -6,10 +6,10 @@ import { z } from 'zod';
 
 import { AxiosError } from 'axios';
 import { useState } from 'react';
-import Button from '../components/Button';
-import Input from '../components/Input';
-import Layout from '../components/Layout';
-import OutlinedButton from '../components/OutlinedButton';
+import Button from '../components/atoms/Button';
+import Input from '../components/atoms/Input';
+import Layout from '../components/atoms/Layout';
+import OutlinedButton from '../components/atoms/OutlinedButton';
 import { ROUTES } from '../constants/routes';
 import { signupSchema } from '../schemas/schemas';
 import userApi from '../services/userApi';
@@ -132,15 +132,17 @@ function SignupPage() {
               Email
             </label>
             <div className="flex gap-2">
-              <Input
-                id="email"
-                type="email"
-                {...register('email', {
-                  onChange: () => setIsEmailChecked(false),
-                })}
-                error={errors.email?.message}
-                required
-              />
+              <div className="flex-1">
+                <Input
+                  id="email"
+                  type="email"
+                  {...register('email', {
+                    onChange: () => setIsEmailChecked(false),
+                  })}
+                  error={errors.email?.message}
+                  required
+                />
+              </div>
 
               <OutlinedButton
                 type="button"
@@ -161,15 +163,17 @@ function SignupPage() {
               Nickname
             </label>
             <div className="flex gap-2">
-              <Input
-                id="nickname"
-                type="text"
-                {...register('nickname', {
-                  onChange: () => setIsNicknameChecked(false),
-                })}
-                error={errors.nickname?.message}
-                required
-              />
+              <div className="flex-1">
+                <Input
+                  id="nickname"
+                  type="text"
+                  {...register('nickname', {
+                    onChange: () => setIsNicknameChecked(false),
+                  })}
+                  error={errors.nickname?.message}
+                  required
+                />
+              </div>
 
               <OutlinedButton
                 type="button"
