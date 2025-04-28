@@ -5,7 +5,9 @@ import {
   useEffect,
   useState,
 } from 'react';
-import client from '../services/client'; // axios 인스턴스 사용
+import { useLocation, useNavigate } from 'react-router-dom';
+import { ROUTES } from '../constants/routes';
+import client from '../services/client';
 
 // 유저 타입
 export type User = {
@@ -24,7 +26,6 @@ interface AuthContextValue {
   logOut: () => void;
 }
 
-// context 만들기 (초기값 명확히 세팅)
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 // useAuth 훅
@@ -36,13 +37,14 @@ export const useAuth = () => {
   return context;
 };
 
-// AuthProvider 컴포넌트
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAuthInitialized, setIsAuthInitialized] = useState(false);
 
-  // 최초 로딩 시 accessToken 있는지 확인하고 유저 정보 요청
+  const navigate = useNavigate();
+  const location = useLocation();
+
   useEffect(() => {
     const accessToken = localStorage.getItem('accessToken');
     if (!accessToken) {
@@ -53,7 +55,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     (async () => {
       try {
         const res = await client.get<{ result: User }>('/users/myInfo');
-        setUser(res.data.result); // result 안의 유저 데이터만 저장
+        setUser(res.data.result);
         setIsLoggedIn(true);
       } catch (error) {
         console.error('자동 로그인 실패:', error);
@@ -66,6 +68,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     })();
   }, []);
 
+  // 로그인 상태 확인 및 리다이렉트 처리
+  useEffect(() => {
+    if (!isAuthInitialized) return;
+
+    // 로그아웃 상태에서 로그인/회원가입 외의 페이지에 있으면 로그인 페이지로 보냄
+    const publicPaths = [ROUTES.LOGIN, ROUTES.SIGNUP];
+    const isPublicPath = publicPaths.includes(location.pathname);
+
+    if (!isLoggedIn && !isPublicPath) {
+      navigate(ROUTES.LOGIN, { replace: true });
+    }
+  }, [isAuthInitialized, isLoggedIn, location.pathname, navigate]);
+
   const logIn = (user: User) => {
     setUser(user);
     setIsLoggedIn(true);
@@ -77,6 +92,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoggedIn(false);
     setIsAuthInitialized(true);
     localStorage.removeItem('accessToken');
+    navigate(ROUTES.LOGIN, { replace: true });
   };
 
   const value: AuthContextValue = {
