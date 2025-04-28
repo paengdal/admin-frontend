@@ -30,11 +30,19 @@ const checkNickname = async (nickname: string) => {
   return response.data;
 };
 
+// 이메일 중복 확인
+const checkEmail = async (email: string) => {
+  const url = `/users/check/email/exist?email=${email}`;
+  const response = await client.get(url);
+  return response.data;
+};
+
 const userApi = {
   getMyInfo,
   signup,
   login,
   checkNickname,
+  checkEmail,
 };
 
 export default userApi;

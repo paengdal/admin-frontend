@@ -7,7 +7,6 @@ import Layout from '../components/Layout';
 import OutlinedButton from '../components/OutlinedButton';
 import { ROUTES } from '../constants/routes';
 import userApi from '../services/userApi';
-import { SignupDto } from '../types/dtos/user.dto';
 
 function SignupPage() {
   const navigate = useNavigate();
@@ -17,14 +16,40 @@ function SignupPage() {
   const [password, setPassword] = useState('');
   const [checkPassword, setCheckPassword] = useState('');
 
-  const { mutate: signup } = useMutation({
-    mutationFn: (data: SignupDto) => userApi.signup(data),
+  const signupMutation = useMutation({
+    mutationFn: async () => {
+      // 1. 회원가입 요청
+      await userApi.signup({ email, nickname, password });
+
+      // 2. 회원가입 성공하면 바로 로그인 요청
+      await userApi.login({ nickname, password });
+    },
+    onSuccess: () => {
+      // 3. 로그인까지 성공하면 게시글 목록 페이지로 이동
+      navigate(ROUTES.POSTS.LIST);
+    },
+    onError: (error) => {
+      console.error('회원가입 또는 로그인 실패:', error);
+    },
+  });
+
+  const { mutate: checkNickname } = useMutation({
+    mutationFn: (data: string) => userApi.checkNickname(data),
+    onSuccess: (data) => {
+      alert(`${data.message}:${data.result}`);
+    },
+  });
+
+  const { mutate: checkEmail } = useMutation({
+    mutationFn: (data: string) => userApi.checkEmail(data),
+    onSuccess: (data) => {
+      alert(`${data.message}:${data.result}`);
+    },
   });
 
   const handleSignup = (e: React.FormEvent) => {
     e.preventDefault();
-    signup({ email, nickname, password });
-    console.log('회원가입 시도:', { email, nickname, password, checkPassword });
+    signupMutation.mutate();
   };
 
   const handleCancel = () => {
@@ -37,12 +62,12 @@ function SignupPage() {
 
   const handleCheckEmail = () => {
     console.log('이메일 중복 확인:', email);
-    // TODO: 이메일 중복 확인 API 연동
+    checkEmail(email);
   };
 
   const handleCheckNickname = () => {
     console.log('닉네임 중복 확인:', nickname);
-    // TODO: 닉네임 중복 확인 API 연동
+    checkNickname(nickname);
   };
 
   return (
