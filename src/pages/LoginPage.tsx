@@ -104,7 +104,14 @@ function LoginPage() {
 
           {/* 로그인 버튼 */}
           <Button type="submit" disabled={!isValid}>
-            {loginMutation.isPending ? '로그인 중...' : '로그인'}
+            {loginMutation.isPending ? (
+              <div className="flex items-center justify-center gap-2">
+                <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white"></div>
+                로그인 중...
+              </div>
+            ) : (
+              '로그인'
+            )}
           </Button>
           {/* 회원가입 하러 가기 버튼 */}
           <OutlinedButton type="button" onClick={handleSignupNavigate}>

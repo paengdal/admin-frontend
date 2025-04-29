@@ -9,6 +9,7 @@ import Button from '../components/atoms/Button';
 import Input from '../components/atoms/Input';
 import Layout from '../components/atoms/Layout';
 import OutlinedButton from '../components/atoms/OutlinedButton';
+import { ROUTES } from '../constants/routes';
 import userApi from '../services/userApi';
 
 // 수정용 스키마: password 입력 시 6자리 이상 + checkPassword 일치 검증
@@ -72,7 +73,7 @@ function ProfileEditPage() {
   const isFormReady =
     ((hasNickname && isNicknameValid) || hasPassword) && isValid;
 
-  const { mutate: updateProfile } = useMutation({
+  const { mutate: updateProfile, isPending } = useMutation({
     mutationFn: async (
       data: Partial<{ nickname: string; password: string }>
     ) => {
@@ -81,7 +82,7 @@ function ProfileEditPage() {
     onSuccess: (data) => {
       alert('프로필이 수정되었습니다.');
       console.log(data);
-      // navigate(ROUTES.POSTS.LIST);
+      navigate(ROUTES.POSTS.LIST);
     },
     onError: (error) => {
       if (error instanceof AxiosError) {
@@ -207,8 +208,18 @@ function ProfileEditPage() {
             <OutlinedButton type="button" onClick={handleCancel}>
               변경 취소
             </OutlinedButton>
-            <Button type="submit" disabled={!isFormReady}>
+            {/* <Button type="submit" disabled={!isFormReady}>
               변경
+            </Button> */}
+            <Button type="submit" disabled={!isFormReady}>
+              {isPending ? (
+                <div className="flex items-center justify-center gap-2">
+                  <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white"></div>
+                  변경 중...
+                </div>
+              ) : (
+                '변경'
+              )}
             </Button>
           </div>
         </form>

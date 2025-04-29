@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
@@ -15,6 +15,7 @@ import { CreatePostDto } from '../../types/dtos/profile.dto';
 
 function PostCreatePage() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const {
     register,
@@ -28,6 +29,7 @@ function PostCreatePage() {
   const createPostMutation = useMutation({
     mutationFn: (data: CreatePostDto) => postApi.createPost(data),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
       alert('게시글이 작성되었습니다.');
       navigate(ROUTES.POSTS.LIST);
     },
