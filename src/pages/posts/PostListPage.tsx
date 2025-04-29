@@ -91,7 +91,7 @@ function PostListPage() {
         <OutlinedButton
           type="button"
           onClick={handleSearch}
-          className="w-[100px] text-sm"
+          className="!w-[100px] !text-base"
         >
           검색
         </OutlinedButton>
@@ -100,11 +100,11 @@ function PostListPage() {
       {/* 게시글 테이블 */}
       <table className="w-full table-auto border-collapse mb-6">
         <thead>
-          <tr className="bg-gray-100">
-            <th className="p-2 border">제목</th>
-            <th className="p-2 border">닉네임</th>
-            <th className="p-2 border">조회수</th>
-            <th className="p-2 border">업로드 날짜</th>
+          <tr className="bg-gray-100 h-16">
+            <th className="p-2 border w-[57%]">제목</th>
+            <th className="p-2 border w-[13%]">닉네임</th>
+            <th className="p-2 border w-[10%]">조회수</th>
+            <th className="p-2 border w-[20%]">업로드 날짜</th>
           </tr>
         </thead>
         <tbody>
@@ -112,11 +112,11 @@ function PostListPage() {
             posts?.result.map((post) => (
               <tr
                 key={post.id}
-                className="hover:bg-gray-50 cursor-pointer"
+                className="h-16 hover:bg-gray-50 cursor-pointer"
                 onClick={() => handleRowClick(post.id)}
               >
                 <td className="p-2 border">{post.title}</td>
-                <td className="p-2 border">
+                <td className="p-2 border text-center">
                   {user?.id === post.id && (
                     <button
                       className="text-xs text-blue-500 mr-2 underline"
@@ -130,8 +130,8 @@ function PostListPage() {
                   )}
                   {post.nickname}
                 </td>
-                <td className="p-2 border">{post.watch}</td>
-                <td className="p-2 border">
+                <td className="p-2 border text-center">{post.watch}</td>
+                <td className="p-2 border text-center">
                   {dayjs(post.created_at).format('YYYY.MM.DD HH:mm:ss')}
                 </td>
               </tr>
@@ -170,15 +170,15 @@ function PostListPage() {
       {/* 하단 메뉴 */}
       <div className="flex justify-between">
         <div className="flex gap-2">
-          <OutlinedButton onClick={handleEditProfile} className="w-[150px]">
+          <OutlinedButton onClick={handleEditProfile} className="!w-[150px]">
             내정보
           </OutlinedButton>
-          <OutlinedButton onClick={handleLogout} className="w-[150px]">
+          <OutlinedButton onClick={handleLogout} className="!w-[150px]">
             로그아웃
           </OutlinedButton>
         </div>
         <div>
-          <Button onClick={handleWritePost} className="w-[150px]">
+          <Button onClick={handleWritePost} className="!w-[150px]">
             글 작성
           </Button>
         </div>

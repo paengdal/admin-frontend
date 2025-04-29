@@ -162,7 +162,7 @@ function ProfileEditPage() {
               </div>
               <OutlinedButton
                 type="button"
-                className="w-[150px] px-4 !text-base"
+                className="!w-[150px] px-4 !text-base"
                 onClick={handleCheckNickname}
               >
                 닉네임 확인
