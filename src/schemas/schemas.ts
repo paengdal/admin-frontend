@@ -55,3 +55,14 @@ export const editProfileSchema = z
       path: ['checkPassword'],
     }
   );
+
+export const postSchema = z.object({
+  title: z
+    .string()
+    .min(5, '제목은 5자 이상이어야 합니다.')
+    .max(30, '제목은 30자 이내여야 합니다.'),
+  post: z
+    .string()
+    .min(10, '내용은 10자 이상이어야 합니다.')
+    .max(300, '내용은 300자 이내여야 합니다.'),
+});

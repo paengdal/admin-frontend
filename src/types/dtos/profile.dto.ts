@@ -21,3 +21,8 @@ export type PostListResponse = {
   }[];
   message: string;
 };
+
+export type CreatePostDto = {
+  title: string;
+  post: string;
+};

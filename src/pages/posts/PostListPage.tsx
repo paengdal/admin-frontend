@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import Button from '../../components/atoms/Button';
 import Layout from '../../components/atoms/Layout';
 import OutlinedButton from '../../components/atoms/OutlinedButton';
+import { ROUTES } from '../../constants/routes';
 import { useAuth } from '../../contexts/authContext';
 import postApi from '../../services/postApi';
 import { PostListResponse } from '../../types/dtos/profile.dto'; //
@@ -55,15 +56,15 @@ function PostListPage() {
   };
 
   const handleRowClick = (postId: number) => {
-    navigate(`/post/${postId}`);
+    navigate(ROUTES.POSTS.DETAIL(postId.toString()));
   };
 
   const handleWritePost = () => {
-    navigate('/post/create');
+    navigate(ROUTES.POSTS.CREATE);
   };
 
   const handleEditProfile = () => {
-    navigate('/profile/edit');
+    navigate(ROUTES.PROFILE_EDIT);
   };
 
   const handleLogout = () => {
