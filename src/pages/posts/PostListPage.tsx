@@ -11,7 +11,7 @@ import { useAuth } from '../../contexts/authContext';
 import postApi from '../../services/postApi';
 import { PostItemType } from '../../types/dtos/post.dto';
 
-const POSTS_PER_PAGE = 2;
+const POSTS_PER_PAGE = 5;
 
 function PostListPage() {
   const navigate = useNavigate();
@@ -73,15 +73,6 @@ function PostListPage() {
   const handleLogout = () => {
     logOut();
   };
-
-  if (posts) {
-    console.log(posts);
-    // console.log(posts.list, posts.totalCount); // 수정된 부분
-  }
-
-  if (user) {
-    console.log(user.nickname);
-  }
 
   return (
     <Layout>
