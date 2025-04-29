@@ -70,12 +70,13 @@ function PostDetailPage() {
     createMutation.mutate({ postId: Number(postId), comment: commentValue });
   };
 
-  const handleUpdateComment = (commentId: number) => {
+  const handleUpdateComment = (commentId: number, delete_comment: boolean) => {
     if (!editValue.trim() || !user) return;
     updateMutation.mutate({
       commentId,
-      nickname: user.nickname,
+      // nickname: user.nickname,
       comment: editValue,
+      delete_comment,
     });
   };
 
@@ -161,7 +162,12 @@ function PostDetailPage() {
                         취소
                       </OutlinedButton>
                       <Button
-                        onClick={() => handleUpdateComment(comment.commitId)}
+                        onClick={() =>
+                          handleUpdateComment(
+                            comment.commitId,
+                            comment.delete_comment
+                          )
+                        }
                         className="!w-[100px] !h-[40px] !text-sm !p-2"
                       >
                         수정

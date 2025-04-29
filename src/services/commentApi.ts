@@ -32,19 +32,19 @@ const getComments = async ({
 
 const updateComment = async ({
   commentId,
-  nickname,
+  // nickname,
   comment,
   delete_comment = false,
 }: {
   commentId: number;
-  nickname: string;
+  // nickname: string;
   comment: string;
   delete_comment?: boolean;
 }) => {
-  console.log(commentId, nickname, comment, delete_comment);
+  console.log(commentId, comment, delete_comment);
   const url = `/comment/update/one/${commentId}`;
   const response = await client.patch(url, {
-    nickname,
+    // nickname,
     comment,
     delete_comment,
   });
