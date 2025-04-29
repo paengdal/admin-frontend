@@ -6,7 +6,7 @@ import {
 import client from './client';
 
 // 게시글 리스트 불러오기
-const getPostList = async ({ skip, order, take }: getPostsParams) => {
+const getPostList = async ({ skip, order, take = 5 }: getPostsParams) => {
   const url = `/post-article/find/many/${skip}/${take}/${order}`;
   const response = await client.get(url);
 
@@ -18,7 +18,7 @@ const getPostList = async ({ skip, order, take }: getPostsParams) => {
 export const searchPostList = async ({
   keyword,
   skip = 0,
-  take = 10,
+  take = 5,
   order = 'DESC',
 }: {
   keyword: string;

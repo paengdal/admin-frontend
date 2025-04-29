@@ -5,12 +5,13 @@ import { useNavigate } from 'react-router-dom';
 import Button from '../../components/atoms/Button';
 import Layout from '../../components/atoms/Layout';
 import OutlinedButton from '../../components/atoms/OutlinedButton';
+import Pagination from '../../components/molcules/Pagination';
 import { ROUTES } from '../../constants/routes';
 import { useAuth } from '../../contexts/authContext';
 import postApi from '../../services/postApi';
 import { PostItemType } from '../../types/dtos/post.dto';
 
-const POSTS_PER_PAGE = 5;
+const POSTS_PER_PAGE = 2;
 
 function PostListPage() {
   const navigate = useNavigate();
@@ -42,6 +43,8 @@ function PostListPage() {
     },
     placeholderData: (previousData) => previousData,
   });
+
+  const maxPage = posts ? Math.ceil(posts.totalCount / POSTS_PER_PAGE) : 1;
 
   const handleSearch = () => {
     setSearchKeyword(inputValue.trim());
@@ -114,7 +117,7 @@ function PostListPage() {
           </tr>
         </thead>
         <tbody>
-          {!isLoading && posts?.list && posts.list.length > 0 ? (
+          {!isLoading && posts && posts?.totalCount > 0 ? (
             posts.list.map((post: PostItemType) => (
               <tr
                 key={post.id}
@@ -157,33 +160,13 @@ function PostListPage() {
       </table>
 
       {/* 페이지네이션 */}
-      <div className="flex justify-center gap-2 mb-6">
-        {/* 이전 버튼 */}
-        <button
-          disabled={currentPage === 1}
-          onClick={() => setCurrentPage((p) => p - 1)}
-          className="w-10 h-10 rounded-full border flex items-center justify-center text-sm font-bold hover:bg-gray-100 disabled:opacity-50"
-        >
-          {'<'}
-        </button>
-
-        {/* 현재 페이지 번호 */}
-        <div className="w-10 h-10 rounded-full border flex items-center justify-center text-sm font-bold bg-blue-100">
-          {currentPage}
-        </div>
-
-        {/* 다음 버튼 */}
-        {posts?.list && (
-          <button
-            disabled={posts.list.length < POSTS_PER_PAGE}
-            onClick={() => setCurrentPage((p) => p + 1)}
-            className="w-10 h-10 rounded-full border flex items-center justify-center text-sm font-bold hover:bg-gray-100 disabled:opacity-50"
-          >
-            {'>'}
-          </button>
-        )}
-      </div>
-
+      {posts && (
+        <Pagination
+          currentPage={currentPage}
+          maxPage={maxPage}
+          onClick={(page) => setCurrentPage(page)}
+        />
+      )}
       {/* 하단 메뉴 */}
       <div className="flex justify-between">
         <div className="flex gap-2">
