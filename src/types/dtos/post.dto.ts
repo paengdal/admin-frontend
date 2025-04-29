@@ -48,3 +48,13 @@ export interface GetPostResponse {
     message: string;
   };
 }
+
+export interface PostItemType {
+  id: number;
+  title: string;
+  watch: number;
+  created_at: string;
+  user: {
+    nickname: string;
+  };
+}

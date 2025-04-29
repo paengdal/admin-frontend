@@ -8,7 +8,7 @@ import OutlinedButton from '../../components/atoms/OutlinedButton';
 import { ROUTES } from '../../constants/routes';
 import { useAuth } from '../../contexts/authContext';
 import postApi from '../../services/postApi';
-import { PostListResponse } from '../../types/dtos/post.dto'; //
+import { PostItemType } from '../../types/dtos/post.dto';
 
 const POSTS_PER_PAGE = 5;
 
@@ -22,7 +22,7 @@ function PostListPage() {
 
   const skip = (currentPage - 1) * POSTS_PER_PAGE;
 
-  const { data: posts, isLoading } = useQuery<PostListResponse>({
+  const { data: posts, isLoading } = useQuery({
     queryKey: ['posts', { keyword: searchKeyword, skip }],
     queryFn: () => {
       if (searchKeyword) {
@@ -73,11 +73,17 @@ function PostListPage() {
 
   if (posts) {
     console.log(posts);
+    // console.log(posts.list, posts.totalCount); // 수정된 부분
+  }
+
+  if (user) {
+    console.log(user.nickname);
   }
 
   return (
     <Layout>
       <h1 className="text-2xl font-bold mb-6 text-center">자유 게시판</h1>
+
       {/* 검색창 */}
       <div className="relative flex gap-2 mb-4">
         <input
@@ -96,6 +102,7 @@ function PostListPage() {
           검색
         </OutlinedButton>
       </div>
+
       {/* 게시글 테이블 */}
       <table className="w-full table-auto border-collapse mb-6">
         <thead>
@@ -107,8 +114,8 @@ function PostListPage() {
           </tr>
         </thead>
         <tbody>
-          {!isLoading && posts?.result && posts?.result?.length > 0 ? (
-            posts?.result.map((post) => (
+          {!isLoading && posts?.list && posts.list.length > 0 ? (
+            posts.list.map((post: PostItemType) => (
               <tr
                 key={post.id}
                 className="h-16 hover:bg-gray-50 cursor-pointer"
@@ -116,7 +123,7 @@ function PostListPage() {
               >
                 <td className="p-2 border">{post.title}</td>
                 <td className="p-2 border text-center">
-                  {user?.id === post.id && (
+                  {user?.nickname === post.user.nickname && (
                     <button
                       className="text-xs text-blue-500 mr-2 underline"
                       onClick={(e) => {
@@ -127,7 +134,7 @@ function PostListPage() {
                       수정
                     </button>
                   )}
-                  {post.nickname}
+                  {post.user.nickname}
                 </td>
                 <td className="p-2 border text-center">{post.watch}</td>
                 <td className="p-2 border text-center">
@@ -148,6 +155,7 @@ function PostListPage() {
           )}
         </tbody>
       </table>
+
       {/* 페이지네이션 */}
       <div className="flex justify-center gap-2 mb-6">
         {/* 이전 버튼 */}
@@ -165,9 +173,9 @@ function PostListPage() {
         </div>
 
         {/* 다음 버튼 */}
-        {posts?.result && (
+        {posts?.list && (
           <button
-            disabled={posts?.result?.length <= POSTS_PER_PAGE}
+            disabled={posts.list.length < POSTS_PER_PAGE}
             onClick={() => setCurrentPage((p) => p + 1)}
             className="w-10 h-10 rounded-full border flex items-center justify-center text-sm font-bold hover:bg-gray-100 disabled:opacity-50"
           >
@@ -175,6 +183,7 @@ function PostListPage() {
           </button>
         )}
       </div>
+
       {/* 하단 메뉴 */}
       <div className="flex justify-between">
         <div className="flex gap-2">

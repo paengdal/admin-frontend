@@ -1,7 +1,6 @@
 import {
   CreatePostDto,
   getPostsParams,
-  searchPostsParams,
   UpdatePostDto,
 } from '../types/dtos/post.dto';
 import client from './client';
@@ -10,21 +9,30 @@ import client from './client';
 const getPostList = async ({ skip, order, take }: getPostsParams) => {
   const url = `/post-article/find/many/${skip}/${take}/${order}`;
   const response = await client.get(url);
-  return response.data;
+
+  const [list, totalCount] = response.data.result;
+  return { list, totalCount };
 };
 
 // 게시글 검색하기
-const searchPostList = async ({
+export const searchPostList = async ({
   keyword,
-  skip,
-  take,
-  order,
-}: searchPostsParams) => {
-  const url = `/post-article/search/${keyword}`;
-  const response = await client.get(url, {
-    params: { skip, take, order },
-  });
-  return response.data;
+  skip = 0,
+  take = 10,
+  order = 'DESC',
+}: {
+  keyword: string;
+  skip?: number;
+  take?: number;
+  order?: 'ASC' | 'DESC';
+}) => {
+  const response = await client.get(
+    `/post-article/search/${encodeURIComponent(
+      keyword
+    )}/${skip}/${take}/${order}`
+  );
+  const [list, totalCount] = response.data.result;
+  return { list, totalCount };
 };
 
 // 게시글 작성하기

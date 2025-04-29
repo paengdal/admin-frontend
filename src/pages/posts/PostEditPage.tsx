@@ -14,8 +14,6 @@ import { postSchema } from '../../schemas/schemas';
 import postApi from '../../services/postApi';
 import { CreatePostDto, UpdatePostDto } from '../../types/dtos/post.dto';
 
-// ✨ 추가: getPost 리턴 타입 정의
-
 function PostEditPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
