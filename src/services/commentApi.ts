@@ -26,7 +26,8 @@ const getComments = async ({
 }) => {
   const url = `/comment/find/many/${skip}/${take}/${order}/${postId}`;
   const response = await client.get(url);
-  return response.data.result;
+  const [list, totalCount] = response.data.result;
+  return { list, totalCount };
 };
 
 const updateComment = async ({

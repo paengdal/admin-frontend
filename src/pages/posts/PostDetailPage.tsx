@@ -83,6 +83,9 @@ function PostDetailPage() {
     deleteMutation.mutate(commitId);
   };
 
+  if (comments) {
+    console.log(comments);
+  }
   if (!user) return null;
 
   return (
@@ -134,63 +137,77 @@ function PostDetailPage() {
       )}
 
       {/* 댓글 목록 */}
-      {Array.isArray(comments) && comments.length > 0 ? (
+      {Array.isArray(comments?.list) && comments.list.length > 0 ? (
         <ul className="space-y-4">
-          {comments?.map((c: CommentItem) => (
-            <li key={c.commitId + c.comment} className="rounded p-2">
-              {editId === c.commitId ? (
-                <>
-                  <textarea
-                    value={editValue}
-                    onChange={(e) => setEditValue(e.target.value)}
-                    className="w-full border rounded p-2 mb-2 h-[90px]"
-                  />
-                  <div className="flex gap-2 justify-end">
-                    <OutlinedButton
-                      onClick={() => setEditId(null)}
-                      className="!w-[100px] !h-[40px] !text-sm !p-2"
-                    >
-                      취소
-                    </OutlinedButton>
-                    <Button
-                      onClick={() => handleUpdateComment(c.commitId)}
-                      className="!w-[100px] !h-[40px] !text-sm !p-2"
-                    >
-                      수정
-                    </Button>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="whitespace-pre-wrap mb-1">{c.comment}</div>
-                  <div className="text-sm text-gray-500 flex justify-between">
-                    <span>
-                      {dayjs(c.created_at).format('YYYY.MM.DD HH:mm')}
-                    </span>
-                    {user.id === c.userId && (
-                      <div className="space-x-2">
-                        <button
-                          onClick={() => {
-                            setEditId(c.commitId);
-                            setEditValue(c.comment);
-                          }}
-                          className="text-blue-500 underline text-xs"
-                        >
-                          수정
-                        </button>
-                        <button
-                          onClick={() => handleDeleteComment(c.commitId)}
-                          className="text-red-500 underline text-xs"
-                        >
-                          삭제
-                        </button>
+          {comments.list
+            .filter((comment: CommentItem) => !comment.delete_comment) // 삭제되지 않은 것만 남김
+            .map((comment: CommentItem) => (
+              <li
+                key={comment.commitId + comment.comment}
+                className="rounded p-2"
+              >
+                {editId === comment.commitId ? (
+                  <>
+                    <textarea
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value)}
+                      className="w-full border rounded p-2 mb-2 h-[90px]"
+                    />
+                    <div className="flex gap-2 justify-end">
+                      <OutlinedButton
+                        onClick={() => setEditId(null)}
+                        className="!w-[100px] !h-[40px] !text-sm !p-2"
+                      >
+                        취소
+                      </OutlinedButton>
+                      <Button
+                        onClick={() => handleUpdateComment(comment.commitId)}
+                        className="!w-[100px] !h-[40px] !text-sm !p-2"
+                      >
+                        수정
+                      </Button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="whitespace-pre-wrap mb-1">
+                      {comment.comment}
+                    </div>
+                    <div className="text-sm text-gray-500 flex justify-between">
+                      <div className="mt-3">
+                        <span className="mr-2 font-bold">
+                          {comment.user.nickname}
+                        </span>
+                        <span>
+                          {dayjs(comment.created_at).format('YYYY.MM.DD HH:mm')}
+                        </span>
                       </div>
-                    )}
-                  </div>
-                </>
-              )}
-            </li>
-          ))}
+                      {user.id === comment.userId && (
+                        <div className="space-x-2">
+                          <button
+                            onClick={() => {
+                              setEditId(comment.commitId);
+                              setEditValue(comment.comment);
+                            }}
+                            className="text-blue-500 underline text-xs"
+                          >
+                            수정
+                          </button>
+                          <button
+                            onClick={() =>
+                              handleDeleteComment(comment.commitId)
+                            }
+                            className="text-red-500 underline text-xs"
+                          >
+                            삭제
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
+              </li>
+            ))}
         </ul>
       ) : (
         <p className="text-sm text-gray-500">

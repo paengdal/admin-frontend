@@ -5,4 +5,5 @@ export interface CommentItem {
   created_at: string;
   delete_comment: boolean;
   userId: number;
+  user: { nickname: string };
 }
