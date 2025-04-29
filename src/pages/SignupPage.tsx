@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
@@ -18,6 +18,8 @@ type SignupForm = z.infer<typeof signupSchema>;
 
 function SignupPage() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
   const [isEmailChecked, setIsEmailChecked] = useState(false);
   const [isNicknameChecked, setIsNicknameChecked] = useState(false);
 
@@ -44,6 +46,7 @@ function SignupPage() {
       });
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['me'] });
       navigate(ROUTES.POSTS.LIST);
     },
     onError: (error) => {
