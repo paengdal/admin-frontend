@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -41,6 +41,8 @@ type EditProfileForm = z.infer<typeof editProfileSchema>;
 
 function ProfileEditPage() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
   const [isNicknameChecked, setIsNicknameChecked] = useState(false);
 
   const {
@@ -82,6 +84,8 @@ function ProfileEditPage() {
     onSuccess: (data) => {
       alert('프로필이 수정되었습니다.');
       console.log(data);
+      queryClient.invalidateQueries({ queryKey: ['me'] });
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
       navigate(ROUTES.POSTS.LIST);
     },
     onError: (error) => {
