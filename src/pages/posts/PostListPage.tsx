@@ -23,6 +23,7 @@ function PostListPage() {
 
   const skip = (currentPage - 1) * POSTS_PER_PAGE;
 
+  // 게시글 목록
   const { data: posts, isLoading } = useQuery({
     queryKey: ['posts', { keyword: searchKeyword, skip }],
     queryFn: () => {

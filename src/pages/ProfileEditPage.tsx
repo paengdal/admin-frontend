@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -10,32 +10,8 @@ import Input from '../components/atoms/Input';
 import Layout from '../components/atoms/Layout';
 import OutlinedButton from '../components/atoms/OutlinedButton';
 import { ROUTES } from '../constants/routes';
+import { editProfileSchema } from '../schemas/schemas';
 import userApi from '../services/userApi';
-
-// 수정용 스키마: password 입력 시 6자리 이상 + checkPassword 일치 검증
-const editProfileSchema = z
-  .object({
-    nickname: z.string().optional(),
-    password: z
-      .string()
-      .optional()
-      .refine((val) => !val || val.length >= 6, {
-        message: '비밀번호는 6자 이상이어야 합니다.',
-      }),
-    checkPassword: z.string().optional(),
-  })
-  .refine(
-    (data) => {
-      if (data.password) {
-        return data.checkPassword && data.password === data.checkPassword;
-      }
-      return true;
-    },
-    {
-      message: '비밀번호가 일치하지 않습니다.',
-      path: ['checkPassword'],
-    }
-  );
 
 type EditProfileForm = z.infer<typeof editProfileSchema>;
 
@@ -56,12 +32,6 @@ function ProfileEditPage() {
     mode: 'onChange',
   });
 
-  const { data: user } = useQuery({
-    queryKey: ['me'],
-    queryFn: userApi.getMyInfo,
-  });
-  console.log(user);
-
   const nickname = watch('nickname');
   const password = watch('password');
 
@@ -81,9 +51,8 @@ function ProfileEditPage() {
     ) => {
       return await userApi.updateProfile(data);
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       alert('프로필이 수정되었습니다.');
-      console.log(data);
       queryClient.invalidateQueries({ queryKey: ['me'] });
       queryClient.invalidateQueries({ queryKey: ['posts'] });
       navigate(ROUTES.POSTS.LIST);
@@ -212,9 +181,6 @@ function ProfileEditPage() {
             <OutlinedButton type="button" onClick={handleCancel}>
               변경 취소
             </OutlinedButton>
-            {/* <Button type="submit" disabled={!isFormReady}>
-              변경
-            </Button> */}
             <Button type="submit" disabled={!isFormReady}>
               {isPending ? (
                 <div className="flex items-center justify-center gap-2">

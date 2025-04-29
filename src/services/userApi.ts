@@ -21,7 +21,6 @@ const login = async (data: LoginDto) => {
   const response = await client.post(url, data);
 
   localStorage.setItem('accessToken', response.data.result);
-  console.log(response);
   return response;
 };
 

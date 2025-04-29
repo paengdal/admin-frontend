@@ -167,7 +167,6 @@ function PostDetailPage() {
                     <span>
                       {dayjs(c.created_at).format('YYYY.MM.DD HH:mm')}
                     </span>
-                    {/* {c.delete_comment && ( */}
                     {user.id === c.userId && (
                       <div className="space-x-2">
                         <button

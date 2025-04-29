@@ -36,11 +36,6 @@ function LoginPage() {
       });
     },
     onSuccess: () => {
-      console.log('✅ 로그인 성공, 이동 시도');
-      console.log(
-        'localStorage accessToken:',
-        localStorage.getItem('accessToken')
-      );
       queryClient.invalidateQueries({ queryKey: ['me'] });
       navigate(ROUTES.POSTS.LIST);
     },

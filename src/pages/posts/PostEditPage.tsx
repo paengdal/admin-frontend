@@ -36,9 +36,9 @@ function PostEditPage() {
     queryFn: () => postApi.getPost(postId!),
   });
 
+  // 게시글 정보 초깃값 세팅
   useEffect(() => {
     if (post) {
-      console.log(post.result.title);
       reset({
         title: post.result.title,
         post: post.result.post,

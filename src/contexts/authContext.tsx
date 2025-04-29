@@ -35,16 +35,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const location = useLocation();
   const queryClient = useQueryClient();
 
-  // ✅ useQuery로 userApi.getUserInfo를 queryFn으로 사용
   const { data: user, isLoading } = useQuery({
     queryKey: ['me'],
     queryFn: async () => {
       const res = await userApi.getMyInfo();
-      console.log('✅ [me] 호출 결과:', res);
       return res;
     },
-    retry: false,
-    refetchOnWindowFocus: false,
+    staleTime: Infinity,
   });
 
   const isLoggedIn = !!user;

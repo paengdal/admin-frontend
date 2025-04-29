@@ -6,7 +6,6 @@ function getAccessToken() {
 
 const client = axios.create({
   baseURL: import.meta.env.VITE_API_URL || '/api',
-  // withCredentials: true,
 });
 
 // Authorization 제외할 경로 리스트
