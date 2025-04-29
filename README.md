@@ -1,4 +1,4 @@
-# 개발 히스토리/참고 사항
+# 개발 참고 사항
 
 1. miro에는 email, password로그인으로 나와 있으나 실제로는 nickname과 password로그인임.
     1. nickname으로 반영해서 구현
