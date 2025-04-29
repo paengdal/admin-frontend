@@ -11,7 +11,7 @@ import OutlinedButton from '../../components/atoms/OutlinedButton';
 import { ROUTES } from '../../constants/routes';
 import { postSchema } from '../../schemas/schemas';
 import postApi from '../../services/postApi';
-import { CreatePostDto } from '../../types/dtos/profile.dto';
+import { CreatePostDto } from '../../types/dtos/post.dto';
 
 function PostCreatePage() {
   const navigate = useNavigate();

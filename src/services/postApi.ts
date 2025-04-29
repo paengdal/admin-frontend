@@ -2,7 +2,8 @@ import {
   CreatePostDto,
   getPostsParams,
   searchPostsParams,
-} from '../types/dtos/profile.dto';
+  UpdatePostDto,
+} from '../types/dtos/post.dto';
 import client from './client';
 
 // 게시글 리스트 불러오기
@@ -33,10 +34,34 @@ const createPost = async (data: CreatePostDto) => {
   return response.data;
 };
 
+// 하나의 게시글 불러오기
+const getPost = async (postId: string) => {
+  const url = `/post-article/find/one/${postId}`;
+  const response = await client.get(url);
+  return response.data;
+};
+
+// 게시글 삭제하기
+const deletePost = async (postId: string) => {
+  const url = `/post-article/delete/one/${postId}`;
+  const response = await client.delete(url);
+  return response.data;
+};
+
+// 게시글 수정하기
+const updatePost = async (data: UpdatePostDto, postId: string) => {
+  const url = `/post-article/update/one/${postId}`;
+  const response = await client.patch(url, data);
+  return response.data;
+};
+
 const postApi = {
   getPostList,
   searchPostList,
   createPost,
+  getPost,
+  deletePost,
+  updatePost,
 };
 
 export default postApi;

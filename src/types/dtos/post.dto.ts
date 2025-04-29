@@ -26,3 +26,25 @@ export type CreatePostDto = {
   title: string;
   post: string;
 };
+
+export type UpdatePostDto = {
+  title: string;
+  post: string;
+  watch: string;
+};
+
+export interface GetPostResponse {
+  result: {
+    result: {
+      id: number;
+      userId: number;
+      nickname: string;
+      title: string;
+      post: string;
+      watch: number;
+      created_at: string;
+      updated_at: string;
+    };
+    message: string;
+  };
+}

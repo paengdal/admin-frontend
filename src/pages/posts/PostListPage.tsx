@@ -8,7 +8,7 @@ import OutlinedButton from '../../components/atoms/OutlinedButton';
 import { ROUTES } from '../../constants/routes';
 import { useAuth } from '../../contexts/authContext';
 import postApi from '../../services/postApi';
-import { PostListResponse } from '../../types/dtos/profile.dto'; //
+import { PostListResponse } from '../../types/dtos/post.dto'; //
 
 const POSTS_PER_PAGE = 5;
 
@@ -78,7 +78,6 @@ function PostListPage() {
   return (
     <Layout>
       <h1 className="text-2xl font-bold mb-6 text-center">자유 게시판</h1>
-
       {/* 검색창 */}
       <div className="relative flex gap-2 mb-4">
         <input
@@ -97,7 +96,6 @@ function PostListPage() {
           검색
         </OutlinedButton>
       </div>
-
       {/* 게시글 테이블 */}
       <table className="w-full table-auto border-collapse mb-6">
         <thead>
@@ -123,7 +121,7 @@ function PostListPage() {
                       className="text-xs text-blue-500 mr-2 underline"
                       onClick={(e) => {
                         e.stopPropagation();
-                        navigate(`/post/edit/${post.id}`);
+                        navigate(ROUTES.POSTS.EDIT(post.id.toString()));
                       }}
                     >
                       수정
@@ -150,24 +148,33 @@ function PostListPage() {
           )}
         </tbody>
       </table>
-
       {/* 페이지네이션 */}
       <div className="flex justify-center gap-2 mb-6">
-        {currentPage > 1 && (
-          <OutlinedButton onClick={() => setCurrentPage((p) => p - 1)}>
-            이전
-          </OutlinedButton>
-        )}
-        <div className="flex items-center justify-center w-10 h-10 rounded-full border text-sm font-bold bg-blue-100">
+        {/* 이전 버튼 */}
+        <button
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage((p) => p - 1)}
+          className="w-10 h-10 rounded-full border flex items-center justify-center text-sm font-bold hover:bg-gray-100 disabled:opacity-50"
+        >
+          {'<'}
+        </button>
+
+        {/* 현재 페이지 번호 */}
+        <div className="w-10 h-10 rounded-full border flex items-center justify-center text-sm font-bold bg-blue-100">
           {currentPage}
         </div>
-        {posts?.result?.length === POSTS_PER_PAGE && (
-          <OutlinedButton onClick={() => setCurrentPage((p) => p + 1)}>
-            다음
-          </OutlinedButton>
+
+        {/* 다음 버튼 */}
+        {posts?.result && (
+          <button
+            disabled={posts?.result?.length <= POSTS_PER_PAGE}
+            onClick={() => setCurrentPage((p) => p + 1)}
+            className="w-10 h-10 rounded-full border flex items-center justify-center text-sm font-bold hover:bg-gray-100 disabled:opacity-50"
+          >
+            {'>'}
+          </button>
         )}
       </div>
-
       {/* 하단 메뉴 */}
       <div className="flex justify-between">
         <div className="flex gap-2">
