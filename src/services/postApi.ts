@@ -16,11 +16,13 @@ const getPostList = async ({ skip, order, take }: getPostsParams) => {
 const searchPostList = async ({
   keyword,
   skip,
-  order,
   take,
+  order,
 }: searchPostsParams) => {
-  const url = `/post-article/search/${keyword}/${skip}/${take}/${order}`;
-  const response = await client.get(url);
+  const url = `/post-article/search/${keyword}`;
+  const response = await client.get(url, {
+    params: { skip, take, order },
+  });
   return response.data;
 };
 
