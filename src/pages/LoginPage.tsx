@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
@@ -17,6 +17,7 @@ type LoginForm = z.infer<typeof loginSchema>;
 
 function LoginPage() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const {
     register,
@@ -35,6 +36,12 @@ function LoginPage() {
       });
     },
     onSuccess: () => {
+      console.log('✅ 로그인 성공, 이동 시도');
+      console.log(
+        'localStorage accessToken:',
+        localStorage.getItem('accessToken')
+      );
+      queryClient.invalidateQueries({ queryKey: ['me'] });
       navigate(ROUTES.POSTS.LIST);
     },
     onError: (error) => {

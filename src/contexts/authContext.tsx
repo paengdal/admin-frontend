@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { createContext, ReactNode, useContext } from 'react';
+import { createContext, ReactNode, useContext, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ROUTES } from '../constants/routes';
 import userApi from '../services/userApi';
@@ -38,7 +38,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // ✅ useQuery로 userApi.getUserInfo를 queryFn으로 사용
   const { data: user, isLoading } = useQuery({
     queryKey: ['me'],
-    queryFn: userApi.getMyInfo,
+    queryFn: async () => {
+      const res = await userApi.getMyInfo();
+      console.log('✅ [me] 호출 결과:', res);
+      return res;
+    },
     retry: false,
     refetchOnWindowFocus: false,
   });
@@ -47,14 +51,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const isAuthInitialized = !isLoading;
 
   // 로그인 상태 확인 및 리다이렉트 처리
-  if (isAuthInitialized) {
-    const publicPaths = [ROUTES.LOGIN, ROUTES.SIGNUP];
-    const isPublicPath = publicPaths.includes(location.pathname);
+  useEffect(() => {
+    if (isAuthInitialized) {
+      const publicPaths = [ROUTES.LOGIN, ROUTES.SIGNUP];
+      const isPublicPath = publicPaths.includes(location.pathname);
 
-    if (!isLoggedIn && !isPublicPath) {
-      navigate(ROUTES.LOGIN, { replace: true });
+      if (!isLoggedIn && !isPublicPath) {
+        navigate(ROUTES.LOGIN, { replace: true });
+      }
     }
-  }
+  }, [isAuthInitialized, isLoggedIn, location.pathname, navigate]);
 
   const logout = () => {
     localStorage.removeItem('accessToken');

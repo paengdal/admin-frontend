@@ -1,8 +1,10 @@
 import { ButtonHTMLAttributes } from 'react';
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {}
-
-function Button({ className = '', disabled, ...props }: ButtonProps) {
+function Button({
+  className = '',
+  disabled,
+  ...props
+}: ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
     <button
       {...props}

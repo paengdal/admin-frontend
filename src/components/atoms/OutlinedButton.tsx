@@ -1,8 +1,9 @@
 import { ButtonHTMLAttributes } from 'react';
 
-interface OutlinedButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {}
-
-function OutlinedButton({ className = '', ...props }: OutlinedButtonProps) {
+function OutlinedButton({
+  className = '',
+  ...props
+}: ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
     <button
       {...props}
