@@ -11,7 +11,7 @@ interface Props {
   onLogin: () => void;
 }
 
-export default function SignupActionButtons({
+export default function SignupButtons({
   isValid,
   isEmailChecked,
   isNicknameChecked,

@@ -1,23 +1,19 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 
-import { AxiosError } from 'axios';
-import Button from '../components/atoms/Button';
-import Input from '../components/atoms/Input';
 import Layout from '../components/atoms/Layout';
-import OutlinedButton from '../components/atoms/OutlinedButton';
+import LoginButtons from '../components/organisms/LoginButtons';
+import LoginInputSection from '../components/organisms/LoginInputSection';
 import { ROUTES } from '../constants/routes';
+import { useLoginMutation } from '../hooks/useLogin';
 import { loginSchema } from '../schemas/schemas';
-import userApi from '../services/userApi';
 
-type LoginForm = z.infer<typeof loginSchema>;
+export type LoginForm = z.infer<typeof loginSchema>;
 
 function LoginPage() {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
 
   const {
     register,
@@ -28,32 +24,13 @@ function LoginPage() {
     mode: 'onChange', // 중요: 입력 즉시 검증
   });
 
-  const loginMutation = useMutation({
-    mutationFn: async (data: LoginForm) => {
-      await userApi.login({
-        nickname: data.nickname,
-        password: data.password,
-      });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['me'] });
-      navigate(ROUTES.POSTS.LIST);
-    },
-    onError: (error) => {
-      if (error instanceof AxiosError) {
-        console.error('서버 응답:', error.response?.data);
-        alert(error.response?.data.message || '로그인 실패');
-      } else {
-        console.error('예상치 못한 에러:', error);
-        alert('로그인 중 오류가 발생했습니다.');
-      }
-    },
-  });
-
+  // 로그인
+  const loginMutation = useLoginMutation();
   const handleLogin = (data: LoginForm) => {
     loginMutation.mutate(data);
   };
 
+  // 회원가입 페이지로 이동
   const handleSignupNavigate = () => {
     navigate(ROUTES.SIGNUP);
   };
@@ -63,55 +40,12 @@ function LoginPage() {
       <div className="bg-white p-8 rounded shadow">
         <h1 className="text-2xl font-bold mb-6 text-center">로그인</h1>
         <form onSubmit={handleSubmit(handleLogin)} className="space-y-6">
-          {/* Nickname 입력 */}
-          <div>
-            <label
-              htmlFor="nickname"
-              className="block text-xl font-medium mb-2"
-            >
-              Nickname
-            </label>
-            <Input
-              id="nickname"
-              type="text"
-              {...register('nickname')}
-              error={errors.nickname?.message}
-              required
-            />
-          </div>
-
-          {/* Password 입력 */}
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-xl font-medium mb-2"
-            >
-              Password
-            </label>
-            <Input
-              id="password"
-              type="password"
-              {...register('password')}
-              error={errors.password?.message}
-              required
-            />
-          </div>
-
-          {/* 로그인 버튼 */}
-          <Button type="submit" disabled={!isValid}>
-            {loginMutation.isPending ? (
-              <div className="flex items-center justify-center gap-2">
-                <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white"></div>
-                로그인 중...
-              </div>
-            ) : (
-              '로그인'
-            )}
-          </Button>
-          {/* 회원가입 하러 가기 버튼 */}
-          <OutlinedButton type="button" onClick={handleSignupNavigate}>
-            회원가입
-          </OutlinedButton>
+          <LoginInputSection register={register} errors={errors} />
+          <LoginButtons
+            isValid={isValid}
+            isPending={loginMutation.isPending}
+            onSignup={handleSignupNavigate}
+          />
         </form>
       </div>
     </Layout>

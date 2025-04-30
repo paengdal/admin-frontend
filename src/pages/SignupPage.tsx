@@ -61,10 +61,12 @@ function SignupPage() {
     }
   };
 
+  // 회원 가입 취소
   const handleCancel = () => {
     navigate(ROUTES.LOGIN);
   };
 
+  // 로그인 페이지로 이동
   const handleLogin = () => {
     navigate(ROUTES.LOGIN);
   };
