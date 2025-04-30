@@ -11,7 +11,7 @@ import { useAuth } from '../../contexts/authContext';
 import postApi from '../../services/postApi';
 import { PostItemType } from '../../types/dtos/post.dto';
 
-const POSTS_PER_PAGE = 5;
+const POSTS_PER_PAGE = 5; // 한 페이지 목록 개수
 
 function PostListPage() {
   const navigate = useNavigate();
