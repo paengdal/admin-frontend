@@ -7,7 +7,7 @@ import Button from '../../components/atoms/Button';
 import OutlinedButton from '../../components/atoms/OutlinedButton';
 import CommentList from '../../components/organisms/CommentList';
 import { useAuth } from '../../contexts/authContext';
-import { useCommentMutations } from '../../hooks/useCommentMutations';
+import { useCommentMutations } from '../../hooks/useComment';
 import postCommentApi from '../../services/commentApi';
 import postApi from '../../services/postApi';
 
