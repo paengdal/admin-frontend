@@ -17,13 +17,14 @@ export function useSignupMutation() {
         nickname: data.nickname,
         password: data.password,
       });
-      await userApi.login({
+      return await userApi.login({
         nickname: data.nickname,
         password: data.password,
       });
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['me'] });
+    onSuccess: (data) => {
+      console.log(data);
+      queryClient.refetchQueries({ queryKey: ['me'] });
       navigate(ROUTES.POSTS.LIST);
     },
     onError: (error) => {

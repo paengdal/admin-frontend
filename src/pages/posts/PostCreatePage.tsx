@@ -29,7 +29,7 @@ function PostCreatePage() {
   const createPostMutation = useMutation({
     mutationFn: (data: CreatePostDto) => postApi.createPost(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['posts'] });
+      queryClient.refetchQueries({ queryKey: ['posts'] });
       alert('게시글이 작성되었습니다.');
       navigate(ROUTES.POSTS.LIST);
     },

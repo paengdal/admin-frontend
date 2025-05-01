@@ -38,8 +38,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const { data: user, isLoading } = useQuery({
     queryKey: ['me'],
     queryFn: async () => {
-      const res = await userApi.getMyInfo();
-      return res;
+      const userData = await userApi.getMyInfo();
+      console.log(userData);
+      return userData;
     },
     staleTime: Infinity,
   });
@@ -61,7 +62,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = () => {
     localStorage.removeItem('accessToken');
-    queryClient.invalidateQueries({ queryKey: ['me'] });
+    queryClient.removeQueries({ queryKey: ['me'] });
     navigate(ROUTES.LOGIN, { replace: true });
   };
 

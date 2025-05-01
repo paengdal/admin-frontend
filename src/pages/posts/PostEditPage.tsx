@@ -51,7 +51,8 @@ function PostEditPage() {
   const updatePostMutation = useMutation({
     mutationFn: (data: UpdatePostDto) => postApi.updatePost(data, postId!),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['posts'] });
+      queryClient.refetchQueries({ queryKey: ['posts'] });
+      queryClient.invalidateQueries({ queryKey: ['post', { postId }] });
       alert('게시글이 수정되었습니다.');
       navigate(ROUTES.POSTS.LIST);
     },
@@ -70,7 +71,7 @@ function PostEditPage() {
   const deletePostMutation = useMutation({
     mutationFn: () => postApi.deletePost(postId!),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['posts'] });
+      queryClient.refetchQueries({ queryKey: ['posts'] });
       alert('게시글이 삭제되었습니다.');
       navigate(ROUTES.POSTS.LIST);
     },
